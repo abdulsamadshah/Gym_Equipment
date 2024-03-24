@@ -11,6 +11,7 @@ import 'package:firebase_database/ui/firebase_animated_list.dart';
 
 import '../../core/const/bottomSheet.dart';
 import '../../core/utils/utility.dart';
+import 'Admin.dart';
 
 class Uploadcategory extends StatefulWidget {
   const Uploadcategory({Key? key}) : super(key: key);
@@ -21,34 +22,58 @@ class Uploadcategory extends StatefulWidget {
 
 class _UploadcategoryState extends State<Uploadcategory> {
   final postref =
-      FirebaseDatabase.instance.reference().child("starbabiescategory");
+      FirebaseDatabase.instance.reference().child("Gym_Equipment_Category");
   final getcategoryref = FirebaseDatabase.instance.reference();
   TextEditingController product_name = TextEditingController();
   TextEditingController price = TextEditingController();
   TextEditingController description = TextEditingController();
   TextEditingController quantity = TextEditingController();
 
-  String dropdownvalue = 'BabyGear';
+  String dropdownvalue = 'Plates';
   var items = [
-    'BabyGear',
-    "ToysGaming",
-
+    'Plates',
+    "Benches",
+    "Racks",
   ];
 
   // List of items in our dropdown menu
   var category_image;
   var category;
 
-  // File? image;
-  // var pickimage = ImagePicker();
-  // File? categoryimage;
-  // var categorypickimage = ImagePicker();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Upload Category"),
+        title: Text("Add Category",style: TextStyle(color: Colors.black),),
+      ),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
+        child: reausablebutton(
+            ontap: () async {
+              int categoryid = DateTime.now().microsecondsSinceEpoch;
+              //i created image upload and she ref url
+              firebase_storage.Reference ref = firebase_storage
+                  .FirebaseStorage.instance
+                  .ref("Gym_Equipment_Category$categoryid");
+
+              UploadTask uploadtask = ref.putFile(File(category_image));
+              await Future.value(uploadtask);
+              //and thend download image url created
+              var productimg = await ref.getDownloadURL();
+
+              postref.child(dropdownvalue).set({
+                "categoryid": categoryid.toString(),
+                "categoryname": dropdownvalue.toString(),
+                "categoryimage": productimg.toString(),
+              }).then((value) {
+           Navigator.push(context, MaterialPageRoute(builder: (context) => Admin(),));
+                Utils().fluttertoast("Uploaded Successfully");
+              }).onError((error, stackTrace) {
+                print(error.toString());
+                Utils().fluttertoast(error.toString());
+              });
+            },
+            title: "Upload Category"),
       ),
       body: Stack(
         children: [
@@ -76,34 +101,39 @@ class _UploadcategoryState extends State<Uploadcategory> {
                             bottomNavbar.mainBottomSheet(context);
                           },
                           child: Container(
-                            // height: MediaQuery.of(context).size.height * .2,
-                            // width: MediaQuery.of(context).size.height * 1,
-
                             child: Stack(
                               children: [
-                                Container(
-                                    height: 140,
-                                    width: 320,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey,
-                                      border: Border.all(color: Colors.black),
-                                      borderRadius: BorderRadius.circular(7.0),
-                                    ),
-                                    child: Container(
-                                        child: category_image != null
-                                            ? ClipRect(
-                                                child: Image.file(
-                                                    category_image!.absolute,
-                                                    fit: BoxFit.cover),
-                                              )
-                                            : Container(
-                                                child: Center(
-                                                    child: Text(
-                                                  "Click Here to Upload Category Image",
-                                                  style: TextStyle(
-                                                      color: Colors.white),
-                                                )),
-                                              ))),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 20.w),
+                                  child: Container(
+                                      height: 160.w,
+                                      width: double.maxFinite,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey,
+                                        border: Border.all(color: Colors.black),
+                                        borderRadius:
+                                            BorderRadius.circular(7.0),
+                                      ),
+                                      child: Container(
+                                          child: category_image != null
+                                              ? ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  child: Image.file(
+                                                    File(category_image),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                )
+                                              : Container(
+                                                  child: Center(
+                                                      child: Text(
+                                                    "Click Here to Upload Category Image",
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  )),
+                                                ))),
+                                )
                               ],
                             ),
                           ),
@@ -111,18 +141,21 @@ class _UploadcategoryState extends State<Uploadcategory> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 0, top: 10),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 20.w, vertical: 20.h),
                       child: Container(
-                        // Container(
-                        width: 320,
-                        height: 40,
-                        decoration: BoxDecoration(border: Border.all()),
+                        height: 50.w,
+                        width: double.maxFinite,
+                        decoration: BoxDecoration(
+                            border: Border.all(),
+                            borderRadius: BorderRadius.circular(7.r)),
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(left: 5),
+                              padding: EdgeInsets.only(left: 5),
                               child: Container(
-                                width: 60,
+                                width: 60.w,
                                 child: TextField(
                                   decoration: InputDecoration(
                                     hintText: "Select Category",
@@ -131,71 +164,41 @@ class _UploadcategoryState extends State<Uploadcategory> {
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 50),
-                              child: Container(
-                                child: SingleChildScrollView(
-                                  child: DropdownButton(
-                                    // Initial Value
-                                    value: dropdownvalue,
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: Padding(
+                                padding: EdgeInsets.only(right: 150.w),
+                                child: Container(
+                                  child: SingleChildScrollView(
+                                    child: DropdownButton(
+                                      // Initial Value
+                                      value: dropdownvalue,
 
-                                    // Down Arrow Icon
-                                    icon: const Icon(Icons.keyboard_arrow_down),
+                                      // Down Arrow Icon
+                                      alignment: Alignment.bottomRight,
+                                      icon:
+                                          const Icon(Icons.keyboard_arrow_down),
 
-                                    // Array list of items
-                                    items: items.map((String items) {
-                                      return DropdownMenuItem(
-                                        value: items,
-                                        child: Text(category = items),
-                                      );
-                                    }).toList(),
-                                    // After selecting the desired option,it will
-                                    // change button value to selected value
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        //var dropdownvalue any object set now
-                                        dropdownvalue = newValue!;
-                                      });
-                                    },
+                                      // Array list of items
+                                      items: items.map((String items) {
+                                        return DropdownMenuItem(
+                                          value: items,
+                                          child: Text(category = items),
+                                        );
+                                      }).toList(),
+
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          dropdownvalue = newValue!;
+                                        });
+                                      },
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
+                            )
                           ],
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 70),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 20, right: 20),
-                        child: reausablebutton(
-                            ontap: () async {
-                              int categoryid =
-                                  DateTime.now().microsecondsSinceEpoch;
-                              //i created image upload and she ref url
-                              firebase_storage.Reference ref = firebase_storage
-                                  .FirebaseStorage.instance
-                                  .ref("starbabycategory$categoryid");
-
-                              UploadTask uploadtask =
-                                  ref.putFile(category_image!.absolute);
-                              await Future.value(uploadtask);
-                              //and thend download image url created
-                              var productimg = await ref.getDownloadURL();
-
-                              postref.child(dropdownvalue).set({
-                                "categoryid": categoryid.toString(),
-                                "categoryname": dropdownvalue.toString(),
-                                "categoryimage": productimg.toString(),
-                              }).then((value) {
-                                Utils().fluttertoast("Uploaded Successfully");
-                              }).onError((error, stackTrace) {
-                                print(error.toString());
-                                Utils().fluttertoast(error.toString());
-                              });
-                            },
-                            title: "Upload Category"),
                       ),
                     ),
                   ],

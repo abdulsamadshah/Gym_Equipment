@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gym/app/Presenttation/Admin/uploadproduct.dart';
 import 'package:gym/gen/fonts.gen.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:firebase_storage/firebase_storage.dart';
+
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 
 import 'Uploadcategory.dart';
@@ -62,7 +60,7 @@ class _UploadcategoryState extends State<Admin> {
                   ))),
               Expanded(
                 child: FirebaseAnimatedList(
-                  query: getcategoryref.ref.child("starbabiescategory"),
+                  query: getcategoryref.ref.child("Gym_Equipment_Category"),
                   itemBuilder: (BuildContext context, DataSnapshot snapshot,
                       Animation<double> animation, int index) {
                     // Map<String, dynamic> datas = jsonDecode(jsonEncode(snapshot.value))  as Map<String, dynamic>;
@@ -85,16 +83,16 @@ class _UploadcategoryState extends State<Admin> {
                           child: Stack(
                             children: [
                               Container(
-                                height: 170,
-                                width: 330,
+                                height: 170.h,
+                                width: 330.w,
                                 child: Card(
                                     child: Stack(
                                   children: [
                                     Container(
                                       child: Image.network(
                                         student['categoryimage'],
-                                        height: 160,
-                                        width: 320,
+                                        height: 160.h,
+                                        width: 320.w,
                                         fit: BoxFit.cover,
                                       ),
                                     ),

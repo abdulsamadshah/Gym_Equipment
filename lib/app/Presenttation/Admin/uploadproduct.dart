@@ -1,5 +1,8 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:gym/app/Presenttation/Admin/Productcontroller.dart';
 import 'package:gym/app/core/utils/Utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -8,9 +11,12 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 
+import '../../core/const/bottomSheet.dart';
 import '../../core/theme/common_widget.dart';
+import '../../core/utils/utility.dart';
 import '../../routes/app_pages.dart';
-
+import '../Auth/Widget/Home_widget.dart';
+import 'Admin.dart';
 
 class Uploadproductdata extends StatefulWidget {
   var categoryid, categoryname;
@@ -23,55 +29,12 @@ class Uploadproductdata extends StatefulWidget {
 
 class _Uploadproductdata extends State<Uploadproductdata> {
   final getproductref = FirebaseDatabase.instance.reference();
-  TextEditingController productname = TextEditingController();
-  TextEditingController productdescription = TextEditingController();
-  TextEditingController productprice = TextEditingController();
-  TextEditingController quantity = TextEditingController();
+  final controller = Get.put(ProductContoller());
 
-  // List of items in our dropdown menu
   var category;
-  File? image;
-  var pickimage = ImagePicker();
-  File? categoryimage;
-  var categorypickimage = ImagePicker();
+  var Product_image;
 
-  void selectimagedailog(context) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
-            content: Container(
-              height: 120,
-              child: Column(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      getImagecamera();
-                      Navigator.pop(context);
-                    },
-                    child: ListTile(
-                      leading: Icon(Icons.camera),
-                      title: Text("Camera"),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      getImageGallery();
-                      Navigator.pop(context);
-                    },
-                    child: ListTile(
-                      leading: Icon(Icons.browse_gallery),
-                      title: Text("Gallery"),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +50,44 @@ class _Uploadproductdata extends State<Uploadproductdata> {
               child: Icon(Icons.home_outlined))
         ],
       ),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.symmetric(vertical: 15.w, horizontal: 15.w),
+        child: reausablebutton(
+            ontap: () async {
+              int productid = DateTime.now().microsecondsSinceEpoch;
+              //i created image upload and she ref url
+              firebase_storage.Reference ref = firebase_storage
+                  .FirebaseStorage.instance
+                  .ref("Gym_Equipment_Category$productid");
+
+              UploadTask uploadtask = ref.putFile(File(Product_image)!);
+              await Future.value(uploadtask);
+              //and thend download image url created
+              var productimg = await ref.getDownloadURL();
+
+              var uploadproductref = FirebaseDatabase.instance
+                  .reference()
+                  .child("All_Product")
+                  .child(widget.categoryname);
+
+              uploadproductref.child(productid.toString()).set({
+                "productid": productid.toString(),
+                "productimage": productimg.toString(),
+                "productname": controller.productname.text.toString(),
+                "productdescription":
+                    controller.productdescription.text.toString(),
+                "productprice": controller.productprice.text.toString(),
+                "quantity": controller.quantity.text.toString(),
+              }).then((value) {
+                Utils().fluttertoast("Product Uploaded Successfully");
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Admin(),));
+              }).onError((error, stackTrace) {
+                Utils().fluttertoast(error.toString());
+              });
+            },
+            title: "Upload Product",
+            textcolor: Colors.white),
+      ),
       body: Padding(
         padding: const EdgeInsets.only(left: 20, right: 20),
         child: Stack(
@@ -94,6 +95,7 @@ class _Uploadproductdata extends State<Uploadproductdata> {
             Column(
               children: [
                 SingleChildScrollView(
+                  physics: ScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   child: Container(
                     child: Column(
@@ -105,39 +107,52 @@ class _Uploadproductdata extends State<Uploadproductdata> {
                             padding: const EdgeInsets.only(),
                             child: InkWell(
                               onTap: () {
-                                selectimagedailog(context);
-                                print("selected");
+                                ModalImage bottomNavbar = ModalImage(
+                                    isImageCroppable: true,
+                                    onImageSelect: (path) async {
+                                      if (Utility.isNotNullEmptyOrFalse(path)) {
+                                        Product_image = path;
+                                        Navigator.pop(context);
+                                        setState(() {});
+                                      }
+                                    });
+                                bottomNavbar.mainBottomSheet(context);
                               },
                               child: Container(
-                                // height: MediaQuery.of(context).size.height * .2,
-                                // width: MediaQuery.of(context).size.height * 1,
-
                                 child: Stack(
                                   children: [
-                                    Container(
-                                        height: 140,
-                                        width: 320,
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey,
-                                          border: Border.all(color: Colors.black),
-                                          borderRadius:
-                                              BorderRadius.circular(7.0),
-                                        ),
-                                        child: Container(
-                                            child: image != null
-                                                ? ClipRect(
-                                                    child: Image.file(
-                                                        image!.absolute,
-                                                        fit: BoxFit.cover),
-                                                  )
-                                                : Container(
-                                                    child: Center(
-                                                        child: Text(
-                                                      "Click Here to Upload Product Image",
-                                                      style: TextStyle(
-                                                          color: Colors.white),
-                                                    )),
-                                                  ))),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 15.w),
+                                      child: Container(
+                                          height: 140.w,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey,
+                                            border:
+                                                Border.all(color: Colors.black),
+                                            borderRadius:
+                                                BorderRadius.circular(7.0),
+                                          ),
+                                          child: Container(
+                                              child: Product_image != null
+                                                  ? ClipRRect(
+                                                borderRadius:
+                                                BorderRadius.circular(10),
+                                                child: Image.file(
+                                                  File(Product_image),
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              )
+                                                  : Container(
+                                                      child: Center(
+                                                          child: Text(
+                                                        "Click Here to Upload Product Image",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
+                                                      )),
+                                                    ))),
+                                    )
                                   ],
                                 ),
                               ),
@@ -145,79 +160,64 @@ class _Uploadproductdata extends State<Uploadproductdata> {
                           ),
                         ),
                         SizedBox(
-                          height: 20,
+                          height: 15.h,
                         ),
-                        TextField(
-                          controller: productname,
-                          decoration: InputDecoration(
-                            hintText: "Enter product name",
-                            border: OutlineInputBorder(),
-                          ),
+                        textfield(context,
+                            hintname: "Enter product name",
+                            textctr: controller.productname,
+                            prefixicon: Icons.add_box_sharp,
+                            validators: (value) {
+                          value = value?.trim();
+                          if (value == null || value.toString().isEmpty) {
+                            return 'product name cannot be empty';
+                          } else {
+                            return null;
+                          }
+                        }),
+                        SizedBox(
+                          height: 15.h,
                         ),
-                        TextField(
-                          controller: productdescription,
-                          decoration: InputDecoration(
-                            hintText: "Enter product Description",
-                            border: OutlineInputBorder(),
-                          ),
+                        textfield(context,
+                            hintname: "Enter product Description",
+                            textctr: controller.productdescription,
+                            prefixicon: Icons.add_box_sharp,
+                            validators: (value) {
+                          value = value?.trim();
+                          if (value == null || value.toString().isEmpty) {
+                            return 'product Description cannot be empty';
+                          } else {
+                            return null;
+                          }
+                        }),
+                        SizedBox(
+                          height: 15.h,
                         ),
-                        TextField(
-                          controller: productprice,
-                          decoration: InputDecoration(
-                            hintText: "Enter product Price",
-                            border: OutlineInputBorder(),
-                          ),
+                        textfield(context,
+                            hintname: "Enter product Description",
+                            textctr: controller.productprice,
+                            prefixicon: Icons.add_box_sharp,
+                            validators: (value) {
+                          value = value?.trim();
+                          if (value == null || value.toString().isEmpty) {
+                            return 'product Price cannot be empty';
+                          } else {
+                            return null;
+                          }
+                        }),
+                        SizedBox(
+                          height: 15.h,
                         ),
-                        TextField(
-                          controller: quantity,
-                          decoration: InputDecoration(
-                            hintText: "Enter product Quantity",
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 30),
-                          child:
-                          reausablebutton(
-                              ontap: () async {
-                                int productid =
-                                    DateTime.now().microsecondsSinceEpoch;
-                                //i created image upload and she ref url
-                                firebase_storage.Reference ref = firebase_storage
-                                    .FirebaseStorage.instance
-                                    .ref("starbabycategory$productid");
-
-                                UploadTask uploadtask =
-                                ref.putFile(image!.absolute);
-                                await Future.value(uploadtask);
-                                //and thend download image url created
-                                var productimg = await ref.getDownloadURL();
-
-                                var uploadproductref = FirebaseDatabase.instance
-                                    .reference()
-                                    .child("All Product")
-                                    .child(widget.categoryname);
-                                // .child(widget.categoryid);
-
-                                uploadproductref.child(productid.toString()).set({
-                                  "productid": productid.toString(),
-                                  "productimage": productimg.toString(),
-                                  "productname": productname.text.toString(),
-                                  "productdescription": productdescription.text.toString(),
-                                  "productprice": productprice.text.toString(),
-                                  "quantity": quantity.text.toString(),
-                                }).then((value) {
-                                 Utils().fluttertoast("Uploaded Successfully");
-                                }).onError((error, stackTrace) {
-
-                                  Utils().fluttertoast(error.toString());
-                                });
-                              },
-                              title: "Upload Product",
-                              textcolor: Colors.white),
-
-
-                        ),
+                        textfield(context,
+                            hintname: "Enter product Quantity",
+                            textctr: controller.quantity,
+                            prefixicon: Icons.ac_unit, validators: (value) {
+                          value = value?.trim();
+                          if (value == null || value.toString().isEmpty) {
+                            return 'product Quantity cannot be empty';
+                          } else {
+                            return null;
+                          }
+                        }),
                       ],
                     ),
                   ),
@@ -227,7 +227,9 @@ class _Uploadproductdata extends State<Uploadproductdata> {
                 ),
                 Expanded(
                   child: FirebaseAnimatedList(
-                    query: getproductref.ref.child("All Product").child(widget.categoryname),
+                    query: getproductref.ref
+                        .child("All_Product")
+                        .child(widget.categoryname),
                     itemBuilder: (BuildContext context, DataSnapshot snapshot,
                         Animation<double> animation, int index) {
                       // Map<String, dynamic> datas = jsonDecode(jsonEncode(snapshot.value))  as Map<String, dynamic>;
@@ -246,16 +248,18 @@ class _Uploadproductdata extends State<Uploadproductdata> {
                                   Image(
                                       height: 100,
                                       width: 100,
-                                      image:
-                                      NetworkImage(student['productimage'])),
+                                      image: NetworkImage(
+                                          student['productimage'])),
                                   Expanded(
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsets.only(top: 25),
+                                          padding:
+                                              const EdgeInsets.only(top: 25),
                                           child: Text(
                                             student['productname'],
                                             style: TextStyle(
@@ -277,10 +281,6 @@ class _Uploadproductdata extends State<Uploadproductdata> {
                                           alignment: Alignment.centerRight,
                                           child: InkWell(
                                             onTap: () {
-                                              // setState(() {
-                                              //   showspinner=true;
-                                              // });
-                                              print("babygearproductid:${student['productid']}");
 
                                             },
                                             child: Padding(
@@ -292,7 +292,8 @@ class _Uploadproductdata extends State<Uploadproductdata> {
                                                 decoration: BoxDecoration(
                                                     color: Colors.deepPurple,
                                                     borderRadius:
-                                                    BorderRadius.circular(5)),
+                                                        BorderRadius.circular(
+                                                            5)),
                                                 child: Center(
                                                   child: Text(
                                                     "Add to cart",
@@ -300,7 +301,7 @@ class _Uploadproductdata extends State<Uploadproductdata> {
                                                         color: Colors.white,
                                                         fontSize: 17,
                                                         fontWeight:
-                                                        FontWeight.bold),
+                                                            FontWeight.bold),
                                                   ),
                                                 ),
                                               ),
@@ -325,39 +326,5 @@ class _Uploadproductdata extends State<Uploadproductdata> {
         ),
       ),
     );
-  }
-
-  Future getImageGallery() async {
-    final pickfile = await pickimage.pickImage(source: ImageSource.gallery);
-    setState(() {
-      if (pickfile != null) {
-        image = File(pickfile.path);
-      } else {
-        Utils().fluttertoast("No image selected");
-      }
-    });
-  }
-
-  Future getcategoryImageGallery() async {
-    final categorypickfile =
-        await categorypickimage.pickImage(source: ImageSource.gallery);
-    setState(() {
-      if (categorypickfile != null) {
-        categoryimage = File(categorypickfile.path);
-      } else {
-        Utils().fluttertoast("No categoryimage selected");
-      }
-    });
-  }
-
-  Future getImagecamera() async {
-    final pickfile = await pickimage.pickImage(source: ImageSource.camera);
-    setState(() {
-      if (pickfile != null) {
-        image = File(pickfile.path);
-      } else {
-        Utils().fluttertoast("No image selected");
-      }
-    });
   }
 }
