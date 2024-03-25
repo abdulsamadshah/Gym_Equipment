@@ -6,6 +6,8 @@ import 'package:firebase_database/firebase_database.dart';
 
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 
+import '../../core/theme/common_widget.dart';
+import '../Product.dart';
 import 'Uploadcategory.dart';
 
 class Admin extends StatefulWidget {
@@ -23,6 +25,7 @@ class _UploadcategoryState extends State<Admin> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Admin"),
+
         actions: [
           InkWell(
             onTap: () {
@@ -74,9 +77,10 @@ class _UploadcategoryState extends State<Admin> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Uploadproductdata(
+                                  builder: (context) => Product(
                                         student['categoryid'],
                                         student['categoryname'],
+                                    type: "admin",
                                       )));
                         },
                         child: Center(
@@ -85,20 +89,20 @@ class _UploadcategoryState extends State<Admin> {
                               Container(
                                 height: 170.h,
                                 width: 330.w,
-                                child: Card(
+                                decoration:BoxDecoration(
+                                    borderRadius: BorderRadius.circular(7.r)
+                                ),
                                     child: Stack(
                                   children: [
-                                    Container(
-                                      child: Image.network(
-                                        student['categoryimage'],
-                                        height: 160.h,
-                                        width: 320.w,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
+
+                                     CNetworkImage(
+                                         imageurl: student['categoryimage'],
+                                          height: 150),
+
+
                                     Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 10, bottom: 5),
+                                      padding:  EdgeInsets.only(
+                                          left: 10.w, bottom: 30.h),
                                       child: Center(
                                           child: Align(
                                               alignment: Alignment.bottomLeft,
@@ -107,12 +111,13 @@ class _UploadcategoryState extends State<Admin> {
                                                 style: TextStyle(
                                                     color: Colors.white,
                                                     fontFamily:
-                                                        FontFamily.interRegular,
-                                                    fontSize: 17),
+                                                        FontFamily.interSemiBold,
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 17.sp),
                                               ))),
                                     ),
                                   ],
-                                )),
+                                ),
                               ),
                             ],
                           ),

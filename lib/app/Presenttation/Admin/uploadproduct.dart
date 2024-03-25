@@ -14,6 +14,7 @@ import 'package:firebase_database/ui/firebase_animated_list.dart';
 import '../../core/const/bottomSheet.dart';
 import '../../core/theme/common_widget.dart';
 import '../../core/utils/utility.dart';
+import '../../global_widgets/custom_app_bar.dart';
 import '../../routes/app_pages.dart';
 import '../Auth/Widget/Home_widget.dart';
 import 'Admin.dart';
@@ -28,7 +29,7 @@ class Uploadproductdata extends StatefulWidget {
 }
 
 class _Uploadproductdata extends State<Uploadproductdata> {
-  final getproductref = FirebaseDatabase.instance.reference();
+
   final controller = Get.put(ProductContoller());
 
   var category;
@@ -39,17 +40,8 @@ class _Uploadproductdata extends State<Uploadproductdata> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Upload Product"),
-        actions: [
-          InkWell(
-              onTap: () {
-                Navigator.pushNamedAndRemoveUntil(
-                    context, Routes.HOME, (route) => false);
-              },
-              child: Icon(Icons.home_outlined))
-        ],
-      ),
+
+      appBar: CustomeAppbar(title: 'Upload Product'),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.symmetric(vertical: 15.w, horizontal: 15.w),
         child: reausablebutton(
@@ -225,101 +217,7 @@ class _Uploadproductdata extends State<Uploadproductdata> {
                 SizedBox(
                   height: 15,
                 ),
-                Expanded(
-                  child: FirebaseAnimatedList(
-                    query: getproductref.ref
-                        .child("All_Product")
-                        .child(widget.categoryname),
-                    itemBuilder: (BuildContext context, DataSnapshot snapshot,
-                        Animation<double> animation, int index) {
-                      // Map<String, dynamic> datas = jsonDecode(jsonEncode(snapshot.value))  as Map<String, dynamic>;
-                      Map student = snapshot.value as Map;
-                      student['key'] = snapshot.key;
 
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: Card(
-                          child: Column(
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Image(
-                                      height: 100,
-                                      width: 100,
-                                      image: NetworkImage(
-                                          student['productimage'])),
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 25),
-                                          child: Text(
-                                            student['productname'],
-                                            style: TextStyle(
-                                                fontSize: 17,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Text(
-                                          " " + r"₹" + student['productprice'],
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Align(
-                                          alignment: Alignment.centerRight,
-                                          child: InkWell(
-                                            onTap: () {
-
-                                            },
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  bottom: 10, right: 10),
-                                              child: Container(
-                                                height: 35,
-                                                width: 100,
-                                                decoration: BoxDecoration(
-                                                    color: Colors.deepPurple,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5)),
-                                                child: Center(
-                                                  child: Text(
-                                                    "Add to cart",
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 17,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
               ],
             ),
           ],
