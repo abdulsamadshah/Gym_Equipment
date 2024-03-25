@@ -12,6 +12,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import '../core/theme/common_widget.dart';
 import '../global_widgets/custom_app_bar.dart';
+import '../routes/app_pages.dart';
 import 'Cart_Controller.dart';
 import 'Select_Location.dart';
 
@@ -78,7 +79,12 @@ class _Uploadproductdata extends State<Cart> {
                             width: 200,
                             height: 40,
                             ontap: () async {
-                              Navigator.push(
+                              setState(() {
+                                controller.quantit.value = 0;
+                                controller.quantit.value = 0;
+                              });
+
+                              Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => Select_Drop_Location(
@@ -87,6 +93,8 @@ class _Uploadproductdata extends State<Cart> {
                                       quantity: controller.getquantity(),
                                     ),
                                   ));
+
+
                             },
                             title: "Continue",
                             textcolor: Colors.white),
@@ -251,6 +259,8 @@ class _Uploadproductdata extends State<Cart> {
                                               .then((value) {
                                             controller.quantit.value = 0;
                                             controller.quantit.value = 0;
+                                            Navigator.pushNamedAndRemoveUntil(context, Routes.HOME, (route) => false);
+
                                           });
                                         });
                                       },

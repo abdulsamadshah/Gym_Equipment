@@ -12,8 +12,8 @@ import 'package:flutter/widgets.dart';
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
-  /// File path: assets/images/appicon.jpg
-  AssetGenImage get appicon => const AssetGenImage('assets/images/appicon.jpg');
+  /// File path: assets/images/appicon.png
+  AssetGenImage get appicon => const AssetGenImage('assets/images/appicon.png');
 
   /// File path: assets/images/enternetlost.jpg
   AssetGenImage get enternetlost =>
