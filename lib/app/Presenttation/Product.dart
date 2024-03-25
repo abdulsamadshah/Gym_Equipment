@@ -37,7 +37,7 @@ class _Uploadproductdata extends State<Product> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomeAppbar(title: widget.categoryname),
-      bottomNavigationBar: widget.type == "adming"
+      bottomNavigationBar: widget.type == "admin"
           ? Padding(
               padding: EdgeInsets.symmetric(vertical: 15.w, horizontal: 15.w),
               child: reausablebutton(
@@ -66,30 +66,7 @@ class _Uploadproductdata extends State<Product> {
               padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
               child: GestureDetector(
                 onTap: () {
-                  //******************Add to Cart *************************//
 
-                  var uploadproductref =
-                      FirebaseDatabase.instance.reference().child("Cart");
-                  uploadproductref.remove();
-
-                  uploadproductref.child(student['productid']).set({
-                    "productid": student['productid'].toString(),
-                    "productimage": student['productimage'].toString(),
-                    "productname": student['productname'].toString(),
-                    "productdescription":
-                        student['productdescription'].toString(),
-                    "productprice": student['productprice'].toString(),
-                    "quantity": student['quantity'].toString(),
-                  }).then((value) {
-                    Utils().fluttertoast("Add to Cart Successfully");
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Cart(),
-                        ));
-                  }).onError((error, stackTrace) {
-                    Utils().fluttertoast(error.toString());
-                  });
                 },
                 child: Card(
                     elevation: 1,
@@ -142,7 +119,32 @@ class _Uploadproductdata extends State<Product> {
                                     ),
                                     Center(
                                       child: reausablebutton(
-                                          ontap: () {},
+                                          ontap: () {
+                                            //******************Add to Cart *************************//
+
+                                            var uploadproductref =
+                                            FirebaseDatabase.instance.reference().child("Cart");
+                                            uploadproductref.remove();
+
+                                            uploadproductref.child(student['productid']).set({
+                                              "productid": student['productid'].toString(),
+                                              "productimage": student['productimage'].toString(),
+                                              "productname": student['productname'].toString(),
+                                              "productdescription":
+                                              student['productdescription'].toString(),
+                                              "productprice": student['productprice'].toString(),
+                                              "quantity": student['quantity'].toString(),
+                                            }).then((value) {
+                                              Utils().fluttertoast("Add to Cart Successfully");
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) => Cart(),
+                                                  ));
+                                            }).onError((error, stackTrace) {
+                                              Utils().fluttertoast(error.toString());
+                                            });
+                                          },
                                           title: "Add to Cart",
                                           width: 190,
                                           height: 30),

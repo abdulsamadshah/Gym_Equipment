@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
-import 'package:gym/app/Presenttation/Admin/Admin.dart';
+import 'package:gym/app/Presenttation/Admin/Category.dart';
+
 import 'package:gym/app/Presenttation/Auth/bindings/Auth_binding.dart';
 import 'package:gym/app/Presenttation/Auth/views/Login.dart';
 import 'package:gym/app/Presenttation/Auth/views/Registeration.dart';
@@ -51,7 +52,7 @@ class AppPages {
 
     GetPage(
       name: _Paths.Admin,
-      page: () => Admin(),
+      page: () => Category(),
       transition: Transition.topLevel,
       transitionDuration: Duration(milliseconds: 500),
     ),

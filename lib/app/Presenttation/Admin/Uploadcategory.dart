@@ -7,11 +7,11 @@ import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 
 import '../../core/const/bottomSheet.dart';
 import '../../core/utils/utility.dart';
-import 'Admin.dart';
+
+import 'Category.dart';
 
 class Uploadcategory extends StatefulWidget {
   const Uploadcategory({Key? key}) : super(key: key);
@@ -66,7 +66,7 @@ class _UploadcategoryState extends State<Uploadcategory> {
                 "categoryname": dropdownvalue.toString(),
                 "categoryimage": productimg.toString(),
               }).then((value) {
-           Navigator.push(context, MaterialPageRoute(builder: (context) => Admin(),));
+           Navigator.push(context, MaterialPageRoute(builder: (context) => Category(),));
                 Utils().fluttertoast("Uploaded Successfully");
               }).onError((error, stackTrace) {
                 print(error.toString());
