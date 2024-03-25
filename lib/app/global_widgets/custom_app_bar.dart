@@ -13,16 +13,7 @@ AppBar CustomeAppbar({String title="Dashboard",Color backgroundColor=AppColors.d
     iconTheme: IconThemeData(color: Colors.white, size: 27.sp),
     backgroundColor: backgroundColor,
     title: reausabletext("$title"),
-    actions: [
-    InkWell(onTap: ontap,child:   reausableIcon(
-        icon: Icons.notifications_outlined,
-        color: Colors.white,
-        size: 25),),
-      SizedBox(
-        width: 10.w,
-        height: 10.h,
-      )
-    ],
+
   );
 }
 

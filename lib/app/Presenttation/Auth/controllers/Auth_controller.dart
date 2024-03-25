@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:gym/app/core/theme/loading.dart';
 import 'package:gym/app/core/utils/Utils.dart';
 
 import '../../../routes/app_pages.dart';
@@ -15,17 +16,22 @@ class AuthController extends GetxController {
 
   Future<void> login(BuildContext context) async {
     try {
-      UserCredential userCredential =
+      Loading().showloading(context);
+
           await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
       Utils().fluttertoast("Login Successfully");
+      Loading().dismissloading(context);
+
       // Utils().fluttertoast("${userCredential.toString()}");
       Navigator.pushNamedAndRemoveUntil(
           context, Routes.HOME, (route) => false);
 
     } on FirebaseAuthException catch (e) {
+      Loading().dismissloading(context);
+
       Utils().fluttertoast("${e.toString()}");
     }
   }

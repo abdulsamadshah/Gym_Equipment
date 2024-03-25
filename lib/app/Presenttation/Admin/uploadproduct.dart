@@ -16,6 +16,7 @@ import '../../core/const/bottomSheet.dart';
 import '../../core/theme/common_widget.dart';
 import '../../core/utils/utility.dart';
 import '../../global_widgets/custom_app_bar.dart';
+import '../../routes/app_pages.dart';
 import '../Auth/Widget/Home_widget.dart';
 import 'Category.dart';
 
@@ -74,7 +75,8 @@ class _Uploadproductdata extends State<Uploadproductdata> {
               }).then((value) {
                 Loading().dismissloading(context);
                 Utils().fluttertoast("Product Uploaded Successfully");
-                Navigator.push(context, MaterialPageRoute(builder: (context) => Category(),));
+                Navigator.pushNamedAndRemoveUntil(
+                    context, Routes.HOME, (route) => false);
               }).onError((error, stackTrace) {
                 Loading().dismissloading(context);
                 Utils().fluttertoast(error.toString());
@@ -110,6 +112,7 @@ class _Uploadproductdata extends State<Uploadproductdata> {
                         bottomNavbar.mainBottomSheet(context);
                       },
                       child: Container(
+
                         child: Stack(
                           children: [
                             Padding(
@@ -117,6 +120,7 @@ class _Uploadproductdata extends State<Uploadproductdata> {
                                   horizontal: 15.w),
                               child: Container(
                                   height: 140.w,
+                                  width: double.maxFinite,
                                   decoration: BoxDecoration(
                                     color: Colors.grey,
                                     border:
@@ -125,11 +129,16 @@ class _Uploadproductdata extends State<Uploadproductdata> {
                                     BorderRadius.circular(7.0),
                                   ),
                                   child: Container(
+                                      width: double.maxFinite,
+
                                       child: Product_image != null
                                           ? ClipRRect(
+
                                         borderRadius:
                                         BorderRadius.circular(10),
                                         child: Image.file(
+
+                                          width: double.maxFinite,
                                           File(Product_image),
                                           fit: BoxFit.cover,
                                         ),

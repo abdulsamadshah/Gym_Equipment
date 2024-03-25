@@ -16,6 +16,7 @@ Future<void> main() async {
       const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
 
   runApp(ScreenUtilInit(
+      designSize: Size(375, 812),
       builder: (context, child) => GetMaterialApp(
 
         debugShowCheckedModeBanner: false,

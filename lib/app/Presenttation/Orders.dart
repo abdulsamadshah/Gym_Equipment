@@ -40,7 +40,7 @@ class _UploadcategoryState extends State<Orders> {
             student['key'] = snapshot.key;
 
             return Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              padding: EdgeInsets.symmetric(horizontal: 10.w,vertical: 10.h),
               child: Card(
                 elevation: 2,
                 child: InkWell(
@@ -55,7 +55,7 @@ class _UploadcategoryState extends State<Orders> {
                               topLeft: Radius.circular(7.r),
                               topRight: Radius.circular(7)),
                           child: CachedNetworkImage(
-                            height: 80.h,
+                            height: 120.h,
                             width: double.maxFinite,
                             imageUrl: "${student['productimage']}",
                             fit: BoxFit.fill,
@@ -66,14 +66,14 @@ class _UploadcategoryState extends State<Orders> {
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 10.w, vertical: 10.h),
+                              horizontal: 0.w, vertical: 10.h),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              rowitem(title:"Product",value:student['productname'],valuewidth: 150 ),
-                              rowitem(title:"Name:",value:student['Username'],valuewidth: 150 ),
-                              rowitem(title:"OrderId:",value:student['order_id'],valuewidth: 150 ),
+                              rowitem(title:"Product",value:"${student['productname']}",valuewidth: 230 ),
+                              rowitem(title:"Name",value:student['Username'],valuewidth: 230 ),
+                              rowitem(title:"Order Id",value:student['order_id'],valuewidth: 225 ),
                               rowitem(title:"Payment Status",value:student['Payment_Status'] ,valuewidth: 150),
 
                             ],

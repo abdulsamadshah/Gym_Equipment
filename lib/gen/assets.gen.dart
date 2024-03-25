@@ -19,8 +19,12 @@ class $AssetsImagesGen {
   AssetGenImage get enternetlost =>
       const AssetGenImage('assets/images/enternetlost.jpg');
 
+  /// File path: assets/images/loginImage.png
+  AssetGenImage get loginImage =>
+      const AssetGenImage('assets/images/loginImage.png');
+
   /// List of all assets
-  List<AssetGenImage> get values => [appicon, enternetlost];
+  List<AssetGenImage> get values => [appicon, enternetlost, loginImage];
 }
 
 class Assets {

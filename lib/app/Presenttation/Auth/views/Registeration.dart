@@ -26,11 +26,11 @@ class Registeration extends GetView<AuthController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: 30.h,
+                      height: 70.h,
                     ),
                     Center(
                       child: Image.asset(
-                        "${Assets.images.appicon.path}",
+                        "${Assets.images.loginImage.path}",
                       ),
                     ),
                     SizedBox(

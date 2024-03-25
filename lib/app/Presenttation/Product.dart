@@ -81,8 +81,7 @@ class _Uploadproductdata extends State<Product> {
                             children: [
                               CNetworkImage(
                                   imageurl: student['productimage'],
-                                  width: 120,
-                                  height: 110),
+                                  width: 120,),
                               Padding(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: 10.w, vertical: 10.h),
@@ -101,6 +100,7 @@ class _Uploadproductdata extends State<Product> {
                                       "${student['productdescription']}",
                                       color: Colors.grey,
                                       fontsize: 13,
+                                      maxline: 3,
                                       widths: 190.w,
                                       fontfamily: FontFamily.interRegular,
                                     ),
